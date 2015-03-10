@@ -246,7 +246,7 @@ describe('dc.bubbleChart', function() {
         });
     });
 
-   describe('with elastic axises', function() {
+    describe('with elastic axises', function() {
         beforeEach(function () {
             chart.elasticY(true)
                 .yAxisPadding(3)
@@ -274,30 +274,30 @@ describe('dc.bubbleChart', function() {
             expect(chart.y().domain()[0]).toBe(2);
             expect(chart.y().domain()[1]).toBe(8);
         });
-   });
+    });
 
-   describe('renderlet', function() {
-       var renderlet;
+    describe('renderlet', function() {
+        var renderlet;
 
-       beforeEach(function () {
-           // spyOn doesn't seem to work with plain functions
-           renderlet = jasmine.createSpy('renderlet', function (chart) {
-               chart.selectAll("circle").attr("fill", "red");
-           });
-           renderlet.and.callThrough();
-           chart.renderlet(renderlet);
-       });
+        beforeEach(function () {
+            // spyOn doesn't seem to work with plain functions
+            renderlet = jasmine.createSpy('renderlet', function (chart) {
+                chart.selectAll("circle").attr("fill", "red");
+            });
+            renderlet.and.callThrough();
+            chart.renderlet(renderlet);
+        });
 
-       it('is invoked with render', function () {
-           chart.render();
-           expect(chart.selectAll("circle").attr("fill")).toBe("red");
-           expect(renderlet).toHaveBeenCalled();
-       });
+        it('is invoked with render', function () {
+            chart.render();
+            expect(chart.selectAll("circle").attr("fill")).toBe("red");
+            expect(renderlet).toHaveBeenCalled();
+        });
 
-       it('is invoked with redraw', function () {
-           chart.render().redraw();
-           expect(chart.selectAll("circle").attr("fill")).toBe("red");
-           expect(renderlet.calls.count()).toEqual(2);
+        it('is invoked with redraw', function () {
+            chart.render().redraw();
+            expect(chart.selectAll("circle").attr("fill")).toBe("red");
+            expect(renderlet.calls.count()).toEqual(2);
         });
     });
 
@@ -346,6 +346,36 @@ describe('dc.bubbleChart', function() {
         it('sets the y domain', function () {
             expect(chart.y().domain()[0]).toBe(-7);
             expect(chart.y().domain()[1]).toBe(12);
+        });
+    });
+
+    describe('with logarithmic scales', function() {
+        beforeEach(function () {
+            var rowDimension = data.dimension(function(d, i) {
+                return i;
+            });
+            var rowGroup = rowDimension.group();
+
+            chart
+		.dimension(rowDimension).group(rowGroup)
+                .keyAccessor(function(kv) {
+                    return 0;
+                })
+                .valueAccessor(function(kv) {
+                    return 0;
+                })
+		.x(d3.scale.log().domain([1, 300]))
+		.y(d3.scale.log().domain([1, 10]))
+		.elasticX(false)
+		.elasticY(false)
+	    ;
+        });
+
+        it('renders without errors', function () {
+            chart.render();
+            chart.selectAll("g.node").each(function (d, i) {
+                expect(d3.select(this).attr("transform")).toMatchTranslate(0,0);
+            });
         });
     });
 });

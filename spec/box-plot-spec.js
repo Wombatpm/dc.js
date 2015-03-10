@@ -105,8 +105,8 @@ describe('dc.boxPlot', function() {
         it('should place the whiskers at 1.5x the interquartile range', function() {
             expect(box(1).whiskerLine(0).attr('y1')).toBe('122');
             expect(box(1).whiskerLine(0).attr('y2')).toBe('122');
-            expect(box(1).whiskerLine(1).attr('y1')).toBe('78');
-            expect(box(1).whiskerLine(1).attr('y2')).toBe('78');
+            expect(box(1).whiskerLine(1).attr('y1')).toBeWithinDelta(78);
+            expect(box(1).whiskerLine(1).attr('y2')).toBeWithinDelta(78);
         });
 
         it('should label the whiskers using their calculated values', function() {
@@ -173,9 +173,9 @@ describe('dc.boxPlot', function() {
                 box(0).each(function (d) {
                     expect(d3.select(this).classed("selected")).toBeTruthy();
                 });
-             });
+            });
 
-             it('should deselect the boxes not corresponding to the filtered value', function() {
+            it('should deselect the boxes not corresponding to the filtered value', function() {
                 box(1).each(function (d) {
                     expect(d3.select(this).classed("deselected")).toBeTruthy();
                 });
